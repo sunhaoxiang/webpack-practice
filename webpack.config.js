@@ -1,49 +1,44 @@
-const webpack = require('webpack');
-const path = require('path') // node自带库
-const HtmlWebpackPlugin = require('html-webpack-plugin') // 引入生成html文件的插件
+const path = require('path') // node自带path库
+const webpack = require('webpack') // webpack
 const ExtractTextPlugin = require('extract-text-webpack-plugin') // 引入生成css文件的插件
-
-const VENDOR = [
-  "faker",
-  "lodash",
-  "react",
-  "react-dom",
-  "react-input-range",
-  "react-redux",
-  "redux",
-  "redux-form",
-  "redux-thunk"
-]
+const CleanWebpackPlugin = require('clean-webpack-plugin') // build时删除不需要文件的插件
+const HtmlWebpackPlugin = require('html-webpack-plugin') // 引入生成html文件的插件
 
 module.exports = {
+  // 单文件入口
   // entry: ['babel-polyfill', './src/app.js'], // 入口文件，使用babel-polyfill
   // output: {
   //   path: path.resolve(__dirname, 'dist'), // 打包路径，必须使用绝对地址，输出文件夹
   //   filename: 'main.js' // 打包后输出的文件名
   // },
 
+  // 多文件入口，将文件分为两部分，第一部分是我们自己的代码，第二部分是依赖库
   entry: {
-    // 多文件入口，将文件分为两部分，第一部分是我们自己的代码，第二部分是依赖库
     bundle: [ // 自己的代码
       'babel-polyfill', // 使用babel-polyfill
       './src/index.js'
     ],
-    vendor: [ // 依赖库
+    vendor: [ // 开发依赖库
       "faker",
       "lodash",
       "react",
       "react-dom",
       "react-input-range",
+      "react-router",
       "react-redux",
       "redux",
       "redux-form",
       "redux-thunk"
     ]
   },
-    output: {
-      path: path.resolve(__dirname, 'dist'), // 打包路径，必须使用绝对地址，输出文件夹
-      filename: '[name].[chunkhash].js' // [chunkhash]会自动根据文件是否更改而更换哈希
-    },
+  // 如果想修改 webpack-dev-server 配置，在这个对象里面修改
+  devServer: {
+    port: 8088
+  },
+  output: {
+    path: path.resolve(__dirname, 'dist'), // 打包路径，必须使用绝对地址，输出文件夹
+    filename: '[name].[chunkhash].js' // [chunkhash]会自动根据文件是否更改而更换哈希
+  },
   module: {
     rules: [
       {
@@ -87,22 +82,31 @@ module.exports = {
     ]
   },
   plugins: [
-    // 生成html文件的插件
-    new HtmlWebpackPlugin({
-      filename: 'index_prod.html', // 打包后生成的html文件
-      template: 'src/index.html' // 生成html文件的模板
-    }),
-
     // 生成css文件的插件
     new ExtractTextPlugin("css/[name].[hash].css"),
 
-    // 抽取公共代码的插件
+    // 抽取公共代码的插件，是webpack自带插件
     new webpack.optimize.CommonsChunkPlugin({
       // vendor 打包依赖库
       // manifest文件是将每次打包都会更改的东西单独提取出来，保证没有更改的代码无需重新打包，这样可以加快打包速度
       names: ['vendor', 'manifest'],
       // 配合 manifest 文件使用
       minChunks: Infinity
+    }),
+
+    // build时删除不需要文件的插件
+    // 只删除 dist 文件夹下的 bundle 和 manifest 文件
+    new CleanWebpackPlugin(['dist/bundle.*.js','dist/manifest.*.js'], {
+    // 打印 log
+      verbose: true,
+      // 删除文件
+      dry: false
+    }),
+
+    // 生成html文件的插件，使用这个插件后，打包后的js和css文件会自动被插入html文件中
+    new HtmlWebpackPlugin({
+      filename: 'index_prod.html', // 打包后生成的html文件
+      template: 'src/index.html' // 生成html文件的模板
     })
   ]
 }
