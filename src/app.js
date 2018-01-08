@@ -1,7 +1,7 @@
-import a from './a'
+import arrow from './arrow'
 import b from './b'
 import c from './c'
 
-a()
+console.log(arrow(1, 2))
 b()
 c()
