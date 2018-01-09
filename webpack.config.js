@@ -156,7 +156,7 @@ module.exports = {
     // build时删除不需要文件的插件
     // 只删除 dist 文件夹下的 bundle 和 manifest 文件
     new CleanWebpackPlugin(['dist/bundle.*.js','dist/manifest.*.js'], {
-    // 打印 log
+      // 打印log
       verbose: true,
       // 删除文件
       dry: false
