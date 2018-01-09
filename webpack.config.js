@@ -33,19 +33,22 @@ module.exports = {
   },
   // 如果想修改 webpack-dev-server 配置，在这个对象里面修改
   devServer: {
-    open: true,
-    port: 8088
+    open: true, // 自动打开浏览器
+    port: 8088, // 端口号
+    contentBase: './src/common', // 未打包资源路径
+    publicPath: '/' // 服务器所包资源的输出路径
   },
   output: {
     path: path.resolve(__dirname, 'dist'), // 打包路径，必须使用绝对地址，输出文件夹
-    filename: '[name].[chunkhash].js' // [chunkhash]会自动根据文件是否更改而更换哈希
+    filename: 'js/[name].[chunkhash].js', // [chunkhash]会自动根据文件是否更改而更换哈希
+    publicPath: '/' // 所有资源的基础路径，必须以'/'结尾
   },
   module: {
     rules: [
       {
         test: /\.js$/, // js文件才使用babel
         use: 'babel-loader', // 使用babel-loader
-        exclude: /node_modules/ // 不包括路径
+        exclude: [path.resolve(__dirname, 'node_modules')] // 不包括路径
       },
 
       // 不使用'extract-text-webpack-plugin'插件时css-loader的配置
@@ -59,6 +62,19 @@ module.exports = {
       //         localIdentName: '[path]-[name]-[local]-[hash:base64:6]'
       //         }
       //     }
+      //   ],
+      //   exclude: [
+      //     path.resolve(__dirname, 'node_modules'),
+      //     path.resolve(__dirname, 'src/common')
+      //   ]
+      // },
+
+      // {
+      //   test: /\.css$/,
+      //   use: ['style-loader', 'css-loader'],
+      //   include: [
+      //     path.resolve(__dirname, 'node_modules'),
+      //     path.resolve(__dirname, 'src/common')
       //   ]
       // },
 
@@ -69,14 +85,47 @@ module.exports = {
           use: 'css-loader'
         })
       },
+
       {
         test: /\.scss$/,
-        use: ['style-loader' ,'css-loader', 'sass-loader']
+        use: [
+          'style-loader' ,
+          {
+            loader: 'css-loader',
+            options: {
+              module: true,
+              localIdentName: '[path]-[name]-[local]-[hash:base64:6]'
+            }
+          },
+          'sass-loader'
+        ],
+        exclude: [
+            path.resolve(__dirname, 'node_modules'),
+            path.resolve(__dirname, 'src/common')
+        ]
       },
+      
+      {
+        test: /\.scss$/,
+        use: [ 'style-loader', 'css-loader', 'sass-loader' ],
+        include: [
+          path.resolve(__dirname, 'node_modules'),
+          path.resolve(__dirname, 'src/common')
+        ]
+      },
+
       {
         test: /\.(ttf|eot|woff|woff2)$/,
-        use: 'file-loader'
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: 'fonts/[name].[hash].[ext]' // [字体名].[hash].[图片格式]
+            }
+          }
+        ]
       },
+
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/, // 图片格式正则
         use: [
@@ -84,7 +133,7 @@ module.exports = {
             loader: 'url-loader', // 配置url-loader的可选项
             options: {
               limit: 10000, // 限制图片大小10KB，小于限制会将图片转换为base64格式
-              name: 'images/[name].[hash].[ext]' // 超出限制，创建的文件格式build/images/[图片名].[hash].[图片格式]
+              name: 'imgs/[name].[hash].[ext]' // 超出限制，创建的文件格式build/images/[图片名].[hash].[图片格式]
             }
           }
         ]
