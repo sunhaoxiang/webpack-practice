@@ -19,20 +19,21 @@ module.exports = {
       './src/index.js'
     ],
     vendor: [ // 开发依赖库
-      "faker",
-      "lodash",
-      "react",
-      "react-dom",
-      "react-input-range",
-      "react-router",
-      "react-redux",
-      "redux",
-      "redux-form",
-      "redux-thunk"
+      'faker',
+      'lodash',
+      'react',
+      'react-dom',
+      'react-input-range',
+      'react-router',
+      'react-redux',
+      'redux',
+      'redux-form',
+      'redux-thunk'
     ]
   },
   // 如果想修改 webpack-dev-server 配置，在这个对象里面修改
   devServer: {
+    open: true,
     port: 8088
   },
   output: {
@@ -63,9 +64,13 @@ module.exports = {
       {
         test: /\.css$/,
         use: ExtractTextPlugin.extract({ // 使用'extract-text-webpack-plugin'将css单独打包
-          fallback: "style-loader",
-          use: "css-loader"
+          fallback: 'style-loader',
+          use: 'css-loader'
         })
+      },
+      {
+        test: /\.(ttf|eot|woff|woff2)$/,
+        use: 'file-loader'
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/, // 图片格式正则
@@ -73,7 +78,7 @@ module.exports = {
           {
             loader: 'url-loader', // 配置url-loader的可选项
             options: {
-              limit: 10000, // 限制图片大小10000B，小于限制会将图片转换为base64格式
+              limit: 10000, // 限制图片大小10KB，小于限制会将图片转换为base64格式
               name: 'images/[name].[hash].[ext]' // 超出限制，创建的文件格式build/images/[图片名].[hash].[图片格式]
             }
           }
