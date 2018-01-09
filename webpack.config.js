@@ -55,7 +55,8 @@ module.exports = {
       //     {
       //       loader: 'css-loader',
       //       options: {
-      //         modules: true
+      //         modules: true,
+      //         localIdentName: '[path]-[name]-[local]-[hash:base64:6]'
       //         }
       //     }
       //   ]
@@ -67,6 +68,10 @@ module.exports = {
           fallback: 'style-loader',
           use: 'css-loader'
         })
+      },
+      {
+        test: /\.scss$/,
+        use: ['style-loader' ,'css-loader', 'sass-loader']
       },
       {
         test: /\.(ttf|eot|woff|woff2)$/,
