@@ -172,6 +172,11 @@ module.exports = {
     new HtmlWebpackPlugin({
       filename: 'index_prod.html', // 打包后生成的html文件
       template: 'src/index.html' // 生成html文件的模板
+    }),
+
+    // 为入口文件传递参数的插件
+    new webpack.DefinePlugin({
+      _environment: JSON.stringify('online') // 这个参数可以在入口文件中拿到，必须要用JSON.stringify()方法
     })
   ]
 }
