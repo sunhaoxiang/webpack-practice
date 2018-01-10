@@ -3,6 +3,7 @@ const webpack = require('webpack') // 用于访问内置插件
 const ExtractTextPlugin = require('extract-text-webpack-plugin') // 引入生成css文件的插件
 const CleanWebpackPlugin = require('clean-webpack-plugin') // build时删除不需要文件的插件
 const HtmlWebpackPlugin = require('html-webpack-plugin') // 引入生成html文件的插件
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin') // 压缩js代码的插件
 
 module.exports = {
   // 单文件入口
@@ -35,6 +36,7 @@ module.exports = {
   devServer: {
     open: true, // 自动打开浏览器
     port: 8088, // 端口号
+    hot: true, // 热替换
     contentBase: './src/common', // 未打包资源路径
     publicPath: '/' // 服务器所包资源的输出路径
   },
@@ -43,10 +45,11 @@ module.exports = {
     filename: 'js/[name].[chunkhash].js', // [chunkhash]会自动根据文件是否更改而更换哈希
     publicPath: '/' // 所有资源的基础路径，必须以'/'结尾
   },
+  devtool: 'inline-source-map', // source map
   resolve: {
     extensions: [".js"], // 写在里面的扩展名，在引用时不需要加后缀
     alias: { // 设置引用路径的别名
-      '@': resolve('src')
+      '@': path.resolve(__dirname, 'src')
     }
   },
   module: {
@@ -88,7 +91,14 @@ module.exports = {
         test: /\.css$/,
         use: ExtractTextPlugin.extract({ // 使用'extract-text-webpack-plugin'将css单独打包
           fallback: 'style-loader',
-          use: 'css-loader'
+          use: [
+            {
+              loader: 'css-loader',
+              options: {
+                minimize: true // 压缩
+              }
+            }
+          ]
         })
       },
 
@@ -174,8 +184,8 @@ module.exports = {
     }),
 
     // build时删除不需要文件的插件
-    // 只删除 dist 文件夹下的 bundle 和 manifest 文件
-    new CleanWebpackPlugin(['dist/bundle.*.js','dist/manifest.*.js'], {
+    // 删除dist文件夹下内容
+    new CleanWebpackPlugin(['dist'], {
       // 打印log
       verbose: true,
       // 删除文件
@@ -188,9 +198,21 @@ module.exports = {
       template: 'src/index.html' // 生成html文件的模板
     }),
 
+    // 压缩js代码的插件
+    new UglifyJSPlugin({
+      sourceMap: true // 生成sourceMap
+    }),
+
     // 为入口文件传递参数的插件
     new webpack.DefinePlugin({
       _environment: JSON.stringify('online') // 这个参数可以在入口文件中拿到，必须要用JSON.stringify()方法
     })
+
+    // 可以将bundle拆分成更小的chunk
+    // new webpack.optimize.AggressiveSplittingPlugin({
+		// 	minSize: 30000,
+		// 	maxSize: 50000
+		// })
+
   ]
 }
