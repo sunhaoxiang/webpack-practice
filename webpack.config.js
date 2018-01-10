@@ -1,5 +1,5 @@
-const path = require('path') // node自带path库
-const webpack = require('webpack') // webpack
+const path = require('path') // node自带库
+const webpack = require('webpack') // 用于访问内置插件
 const ExtractTextPlugin = require('extract-text-webpack-plugin') // 引入生成css文件的插件
 const CleanWebpackPlugin = require('clean-webpack-plugin') // build时删除不需要文件的插件
 const HtmlWebpackPlugin = require('html-webpack-plugin') // 引入生成html文件的插件
@@ -16,9 +16,9 @@ module.exports = {
   entry: {
     bundle: [ // 自己的代码
       'babel-polyfill', // 使用babel-polyfill
-      './src/index.js'
+      './src/index.js' // 入口文件
     ],
-    vendor: [ // 开发依赖库
+    vendors: [ // 第三方依赖库
       'faker',
       'lodash',
       'react',
@@ -43,6 +43,12 @@ module.exports = {
     filename: 'js/[name].[chunkhash].js', // [chunkhash]会自动根据文件是否更改而更换哈希
     publicPath: '/' // 所有资源的基础路径，必须以'/'结尾
   },
+  resolve: {
+    extensions: [".js"], // 写在里面的扩展名，在引用时不需要加后缀
+    alias: { // 设置引用路径的别名
+      '@': resolve('src')
+    }
+  },
   module: {
     rules: [
       {
@@ -58,19 +64,19 @@ module.exports = {
       //     {
       //       loader: 'css-loader',
       //       options: {
-      //         modules: true,
-      //         localIdentName: '[path]-[name]-[local]-[hash:base64:6]'
+      //         modules: true, // 开启模块化
+      //         localIdentName: '[path]-[name]-[local]-[hash:base64:6]' // 查询参数
       //         }
       //     }
       //   ],
-      //   exclude: [
+      //   exclude: [ // 不使用模块化的目录
       //     path.resolve(__dirname, 'node_modules'),
       //     path.resolve(__dirname, 'src/common')
       //   ]
       // },
 
       // {
-      //   test: /\.css$/,
+      //   test: /\.css$/, // 不使用模块化的处理方式
       //   use: ['style-loader', 'css-loader'],
       //   include: [
       //     path.resolve(__dirname, 'node_modules'),
@@ -146,9 +152,9 @@ module.exports = {
 
     // 抽取公共代码的插件，是webpack自带插件
     new webpack.optimize.CommonsChunkPlugin({
-      // vendor 打包依赖库
+      // vendors 打包依赖库
       // manifest文件是将每次打包都会更改的东西单独提取出来，保证没有更改的代码无需重新打包，这样可以加快打包速度
-      names: ['vendor', 'manifest'],
+      names: ['vendors', 'manifest'],
       // 配合 manifest 文件使用
       minChunks: Infinity
     }),
