@@ -121,25 +121,39 @@ module.exports = {
       },
 
       {
-        test: /\.(ttf|eot|woff|woff2)$/,
+        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/, // 图片格式正则
         use: [
           {
-            loader: 'file-loader',
+            loader: 'url-loader', // 配置url-loader的可选项
             options: {
-              name: 'fonts/[name].[hash].[ext]' // [字体名].[hash].[图片格式]
+              limit: 10000, // 限制大小10KB，小于限制会转换为base64格式
+              name: 'img/[name].[hash].[ext]' // 超出限制，创建的文件格式images/[名称].[hash].[格式]
             }
           }
         ]
       },
 
       {
-        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/, // 图片格式正则
+        test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
         use: [
           {
             loader: 'url-loader', // 配置url-loader的可选项
             options: {
-              limit: 10000, // 限制图片大小10KB，小于限制会将图片转换为base64格式
-              name: 'imgs/[name].[hash].[ext]' // 超出限制，创建的文件格式build/images/[图片名].[hash].[图片格式]
+              limit: 10000, // 限制大小10KB，小于限制会转换为base64格式
+              name: 'media/[name].[hash].[ext]' // 超出限制，创建的文件格式media/[名称].[hash].[格式]
+            }
+          }
+        ]
+      },
+
+      {
+        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 10000, // 限制大小10KB，小于限制会转换为base64格式
+              name: 'fonts/[name].[hash].[ext]' // 超出限制，创建的文件格式images/[名称].[hash].[格式]
             }
           }
         ]
