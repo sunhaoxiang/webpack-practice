@@ -200,12 +200,21 @@ module.exports = {
 
     // 压缩js代码的插件
     new UglifyJSPlugin({
+      output: {
+        comments: true,  // 删除注释
+      },
       sourceMap: true // 生成sourceMap
     }),
 
     // 为入口文件传递参数的插件
     new webpack.DefinePlugin({
-      _environment: JSON.stringify('online') // 这个参数可以在入口文件中拿到，必须要用JSON.stringify()方法
+      // 可以在入口文件中拿到_environment，必须要用JSON.stringify()方法
+      _environment: JSON.stringify('online'),
+      'process.env': { // 配合package.json scripts传入参数
+        // 需要在scripts命令中加入NODE_ENV=你要传入的参数，可以在入口文件中拿到process.env.NODE_ENV
+        // 例如 NODE_ENV=production webpack --config webpack.config.js
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV)
+      }
     })
 
     // 可以将bundle拆分成更小的chunk
