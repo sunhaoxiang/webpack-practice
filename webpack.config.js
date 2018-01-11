@@ -211,7 +211,7 @@ module.exports = {
       // 可以在入口文件中拿到_environment，必须要用JSON.stringify()方法
       _environment: JSON.stringify('online'),
       'process.env': { // 配合package.json scripts传入参数
-        // 需要在scripts命令中加入NODE_ENV=你要传入的参数，可以在入口文件中拿到process.env.NODE_ENV
+        // 需要在scripts命令中加入NODE_ENV=你要传入的参数，可以在入口文件中拿到process.env.NODE_ENV，最好安装'cross-env'这个插件来防止windows平台报错
         // 例如 NODE_ENV=production webpack --config webpack.config.js
         NODE_ENV: JSON.stringify(process.env.NODE_ENV)
       }
