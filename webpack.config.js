@@ -104,31 +104,46 @@ module.exports = {
 
       {
         test: /\.scss$/,
-        use: [
-          'style-loader' ,
-          {
-            loader: 'css-loader',
-            options: {
-              module: true,
-              localIdentName: '[path]-[name]-[local]-[hash:base64:6]'
+        use: ExtractTextPlugin.extract({ // 使用'extract-text-webpack-plugin'将css单独打包
+          fallback: 'style-loader',
+          use: [
+            {
+              loader: ['css-loader', 'sass-loader'],
+              options: {
+                minimize: true // 压缩
+              }
             }
-          },
-          'sass-loader'
-        ],
-        exclude: [
-            path.resolve(__dirname, 'node_modules'),
-            path.resolve(__dirname, 'src/common')
-        ]
+          ]
+        })
       },
+
+      // {
+      //   test: /\.scss$/,
+      //   use: [
+      //     'style-loader' ,
+      //     {
+      //       loader: 'css-loader',
+      //       options: {
+      //         module: true,
+      //         localIdentName: '[path]-[name]-[local]-[hash:base64:6]'
+      //       }
+      //     },
+      //     'sass-loader'
+      //   ],
+      //   exclude: [
+      //       path.resolve(__dirname, 'node_modules'),
+      //       path.resolve(__dirname, 'src/common')
+      //   ]
+      // },
       
-      {
-        test: /\.scss$/,
-        use: [ 'style-loader', 'css-loader', 'sass-loader' ],
-        include: [
-          path.resolve(__dirname, 'node_modules'),
-          path.resolve(__dirname, 'src/common')
-        ]
-      },
+      // {
+      //   test: /\.scss$/,
+      //   use: [ 'style-loader', 'css-loader', 'sass-loader' ],
+      //   include: [
+      //     path.resolve(__dirname, 'node_modules'),
+      //     path.resolve(__dirname, 'src/common')
+      //   ]
+      // },
 
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/, // 图片格式正则
