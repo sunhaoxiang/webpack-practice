@@ -4,6 +4,8 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin') // 引入生成
 const CleanWebpackPlugin = require('clean-webpack-plugin') // build时删除不需要文件的插件
 const HtmlWebpackPlugin = require('html-webpack-plugin') // 引入生成html文件的插件
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin') // 压缩js代码的插件
+// const HappyPack = require('happypack'); // 将任务分发给子进程，加快打包速度，需要配合修改rules
+
 
 module.exports = {
   // 单文件入口
