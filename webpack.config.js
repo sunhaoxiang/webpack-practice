@@ -192,11 +192,11 @@ module.exports = {
 
     // 抽取公共代码的插件，是webpack自带插件
     new webpack.optimize.CommonsChunkPlugin({
-      // vendors 打包依赖库
+      // vendors打包依赖库
       // manifest文件是将每次打包都会更改的东西单独提取出来，保证没有更改的代码无需重新打包，这样可以加快打包速度
       names: ['vendors', 'manifest'],
       // 配合 manifest 文件使用
-      minChunks: Infinity
+      minChunks: Infinity //值可以为数字
     }),
 
     // build时删除不需要文件的插件
