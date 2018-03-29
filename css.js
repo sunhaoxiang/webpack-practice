@@ -48,6 +48,17 @@ module.export = {
       },
 
       {
+        loader: 'postcss-loader',
+        options: {
+          ident: 'postcss',
+          plugins: [
+            require('autoprefixer')(), // 前缀补全
+            require('postcss-cssnext')(), // 下一代css语法，使用这个插件可以不用autoprefixer，已经包含补全功能
+          ]
+        }
+      },
+
+      {
         test: /\.less$/,
         use: [
           {
