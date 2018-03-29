@@ -83,7 +83,8 @@ module.export = {
 
   plugins: [
     new ExtractTextPlugin({
-      filename: '[name].[hash].css'
+      filename: '[name].[hash].css',
+      allChunks: false // 不提取异步加载的css
     })
   ]
 }
