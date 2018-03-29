@@ -1,5 +1,5 @@
-var webpack = require('webpack');
 var path = require('path');
+var ExtractTextPlugin = require('extract-text-webpack-plugin'); // 引入生成css文件的插件
 
 module.export = {
   entry: {
@@ -18,7 +18,12 @@ module.export = {
         test: /\.css$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: 'style-loader',
+            options: {
+              insertInto: '#app', //在id为app的标签下插入style
+              singleton: true, // 合并为一个标签
+              transform: './css.transform.js' // css形变
+            }
           },
 
           // style-loader/url可配合file-loader使用将css打包为<link>引入的css文件，缺点是每引入一个css就会变为一个<link>标签，会造成网络请求过多，影响性能
@@ -32,25 +37,53 @@ module.export = {
           // },
 
           {
-            loader: 'css-loader'
+            loader: 'css-loader',
+            options: {
+              minimize: true, // 压缩
+              modules:  true, // 模块化
+              localIdentName: '[path][name]_[local]_[hash:base64:5]' // 定义class名称
+            }
           }
         ]
+      },
+
+      {
+        test: /\.less$/,
+        use: [
+          {
+            loader: 'style-loader'
+          },
+
+          {
+            loader: 'css-loader'
+          },
+
+          {
+            loader: 'less-loader'
+          }
+        ]
+      },
+
+      {
+        test: /\.sass$/,
+        use: ExtractTextPlugin.extract({ // 使用'extract-text-webpack-plugin'将css单独打包
+          fallback: 'style-loader',
+          use: [
+            {
+              loader: 'css-loader',
+              options: {
+                minimize: true // 压缩
+              }
+            }
+          ]
+        })
       }
     ]
   },
 
-  plugin: [
-    // 打包自己业务代码的公共部分
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'common',
-      minChunks: 2, // 重复两次就提取出来
-      chunks: ['pageA', 'pageB'] // 指定打包公共代码的范围
-    }),
-    
-    // 打包第三方库和生成的代码
-    new webpack.optimize.CommonsChunkPlugin({
-      names: ['vendor', 'manifest'],
-      minChunks: Infinity
+  plugins: [
+    new ExtractTextPlugin({
+      filename: '[name].[hash].css'
     })
   ]
 }
