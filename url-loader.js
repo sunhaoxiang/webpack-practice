@@ -21,6 +21,15 @@ module.export = {
             options: {
               limit: 10000
             }
+          },
+
+          {
+            loader: 'img-loader',
+            options: {
+              pngquant: {
+                quality: 80
+              }
+            }
           }
         ]
       }
